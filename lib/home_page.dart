@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'auth.dart';
 
+import 'package:flutter/foundation.dart';
+
+
 class HomePage extends StatelessWidget{
   HomePage({this.auth, this.onSignedOut});
   final BaseAuth auth;
@@ -24,6 +27,7 @@ class HomePage extends StatelessWidget{
       appBar: new AppBar(
         title: new Text('Welcome'),
         actions: <Widget>[
+          SizedBox(width:50.0),
           new FlatButton(
             child: new Text('Logout', style: new TextStyle(fontSize: 17.0, color: Colors.white)),
             onPressed: _signOut,
@@ -31,8 +35,10 @@ class HomePage extends StatelessWidget{
         ],
       ),
       body: new Container(
+
         child: new Center(
-          child: new Text('Welcome', style: new TextStyle(fontSize: 32.0, color: Colors.cyanAccent)),
+
+          child: new Text('Привет, ты че охуел?', style: new TextStyle(fontSize: 32.0, color: Colors.blueAccent)),
         ),
       ),
     );
