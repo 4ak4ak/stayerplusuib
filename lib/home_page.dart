@@ -38,7 +38,7 @@ class HomePage extends StatelessWidget{
 
         child: new Center(
 
-          child: new Text('Привет, ты че охуел?', style: new TextStyle(fontSize: 32.0, color: Colors.blueAccent)),
+          child: new Text('Приказывайте, мой хозяин', style: new TextStyle(fontSize: 32.0, color: Colors.blueAccent)),
         ),
       ),
     );

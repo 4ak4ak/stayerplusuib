@@ -2,12 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'dart:async';
+import 'auth_api.dart';
 
 
 class LoginPage extends StatefulWidget {
   LoginPage({this.auth, this.onSignedIn});
   final BaseAuth auth;
   final VoidCallback onSignedIn;
+
 
 
 
@@ -31,6 +34,8 @@ class _LoginPageState extends State<LoginPage> {
 
   //Google Sign In
   GoogleSignIn googleAuth = new GoogleSignIn();
+
+
 
   bool validateAndSave() {
     final form = formKey.currentState;
@@ -121,12 +126,20 @@ class _LoginPageState extends State<LoginPage> {
     List<Widget> buildInputs(){
       return[
         new TextFormField(
-          decoration: new InputDecoration(labelText: 'Email'),
+          autofocus: false,
+          decoration: new InputDecoration(
+            hintText: 'Email',
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(32.0),
+            )),
           validator: (value) => value.isEmpty ? 'Email can not be empty': null,
           onSaved: (value) => _email = value,
         ),
         new TextFormField(
-            decoration: new InputDecoration(labelText: 'Password'),
+            decoration: new InputDecoration(labelText: 'Password',
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(32.0),
+            )),
             obscureText: true,
             validator: (value) => value.isEmpty ? 'Password is empty': null,
             onSaved: (value) => _password = value
@@ -149,7 +162,7 @@ class _LoginPageState extends State<LoginPage> {
                SizedBox(width: 8.0),
                Center(
                    child:  Text(
-                   'Login', style: TextStyle(fontSize: 20.0, color: Colors.white))),
+                   'Log In', style: TextStyle(fontSize: 20.0, color: Colors.white))),
              ],
            ),
            onPressed:  (){
@@ -176,8 +189,15 @@ class _LoginPageState extends State<LoginPage> {
                  'Login with Google', style: TextStyle(fontSize: 20.0, color: Colors.white)),
             ],
           ),
-           onPressed:  (){
-
+           onPressed:  () async {
+              bool b = await _loginUser();
+              b
+                  ? Navigator.of(context).pushNamed('/')
+                  : Scaffold.of(context).showSnackBar(
+                    SnackBar(
+                        content: Text('Wrong Email'),
+                    )
+                    );
            },
         ),
          new RawMaterialButton(
@@ -234,4 +254,43 @@ class _LoginPageState extends State<LoginPage> {
        ];
      }
    }
+  Future<bool> _loginUser() async{
+    final api = await  FBApi.signInWithGoogle();
+    if(api != null){
+      return true;
+    }else{
+      return false;
+    }
+  }
 }
+//class  FBApi {
+//  static FirebaseAuth _auth = FirebaseAuth.instance;
+//  static GoogleSignIn _googleSignIn = GoogleSignIn();
+//
+//  FirebaseUser firebaseUser;
+//
+//  FBApi(FirebaseUser user) {
+//    this.firebaseUser = user;
+//  }
+//
+//  static Future<FBApi> signInWithGoogle() async {
+//    final GoogleSignInAccount googleUser = await _googleSignIn.signIn();
+//    final GoogleSignInAuthentication googleAuth = await googleUser
+//        .authentication;
+//
+//    final FirebaseUser user = await _auth.signInWithGoogle(
+//        idToken: googleAuth.idToken, accessToken: googleAuth.accessToken);
+//
+//    assert(user.email != null);
+//    assert(user.displayName != null);
+//
+//
+//    assert (await user.getIdToken() != null);
+//
+//    final FirebaseUser currentUser = await _auth.currentUser();
+//    assert(user.uid == currentUser.uid);
+//
+//    return FBApi(user);
+//  }
+
+
