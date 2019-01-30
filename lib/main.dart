@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:stayerplusuib/home_page.dart';
 
 import 'auth.dart';
 import 'root_page.dart';
@@ -20,10 +21,13 @@ class MyApp extends StatelessWidget{
         primarySwatch: Colors.blue,
       ),
       home: new RootPage(auth: new Auth()),
-//      routes: <String, WidgetBuilder>{
-//        "/RooPage": (BuildContext context) => new RootPage()
+//      initialRoute: '/homepage',
+//      routes:{
+//        '/homepage': (context) => HomePage(),
+//
 //      },
 
     );
   }
 }
+
