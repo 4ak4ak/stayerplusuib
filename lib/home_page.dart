@@ -10,28 +10,13 @@ class HomePage extends StatefulWidget{
   final VoidCallback onSignedOut;
 
   @override
-  HomePageState createState() {
-    return new HomePageState();
+  _HomePageState createState() {
+    return new _HomePageState();
   }
 }
 
-class HomePageState extends State<HomePage> {
-  String uid = '';
+class _HomePageState extends State<HomePage> {
 
-  getUid(){}
-
-  @override
-  void initState(){
-    this.uid = '';
-    FirebaseAuth.instance.currentUser().then((val){
-      setState((){
-        this.uid = val.uid;
-      });
-    }).catchError((e) {
-      print(e);
-    });
-    super.initState();
-  }
 
   void _signOut()async{
     try{
@@ -45,8 +30,7 @@ class HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
 
-    //var assetsImage = new  AssetImage('assets/menuback.jpg');
-    //var image  = new Image(image: assetsImage, width: 100.0, height: 100.0,)
+
 
 
     // TODO: implement build
@@ -69,7 +53,12 @@ class HomePageState extends State<HomePage> {
           ),
           SliverFillRemaining(
           child: new Container(
-            child: FlatButton(onPressed: null, child: null),
+            child: FlatButton(
+                onPressed: (){
+
+                },
+                child: new Text('Жулдывка, I need a motivation', style: TextStyle(fontSize: 20.0),)
+            ),
           ),
 
           ),
