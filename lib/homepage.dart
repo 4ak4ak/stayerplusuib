@@ -1,15 +1,15 @@
 
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 
-class DashboardPage extends StatefulWidget {
+
+class Dashboard extends StatefulWidget {
   @override
-  _DashboardPageState createState() => _DashboardPageState();
+  _DashboardState createState() => _DashboardState();
 
   }
 
-class _DashboardPageState extends State<DashboardPage>{
+class _DashboardState extends State<Dashboard>{
 
 
 

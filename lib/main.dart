@@ -6,6 +6,7 @@ import 'root_page.dart';
 import 'homepage.dart';
 import 'login_page.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'signuppage.dart';
 
 
 void main(){
@@ -26,8 +27,9 @@ class MyApp extends StatelessWidget{
      // home: new RootPage(auth: new Auth()),
       home: MyHomePage(),
       routes: <String, WidgetBuilder>{
-        '/homepage':(BuildContext context) => DashboardPage(),
-        '/landinpage': (BuildContext context) => MyHomePage()
+        '/homepage':(BuildContext context) => new Dashboard(),
+        '/landinpage': (BuildContext context) => new MyApp(),
+        '/signup': (BuildContext context) => new SignupPage()
       }
 
     );
@@ -154,26 +156,29 @@ class _MyHomePageState extends  State<MyHomePage>{
                 color: Colors.blue
               ),
               RaisedButton(
-                  onPressed: (){ googleAuth.signIn().then((result){
-                    result.authentication.then((googleKey){
-                      FirebaseAuth.instance
-                          .signInWithGoogle(
-                          idToken: googleKey.idToken,
-                          accessToken: googleKey.accessToken)
-                          .then((){
-                            print('Signed in as ${signedInUser.displayName}');
-                            Navigator.of(context).pushReplacementName('/homepage');
-                      })
-                          .catchError((e){
-                            print(e);
+                color: Colors.lightBlueAccent,
+                  child: Text('Google'),
+                  onPressed: () {
+                    googleAuth.signIn().then((result) {
+                      result.authentication.then((googleKey) {
+                        FirebaseAuth.instance
+                            .signInWithGoogle(
+                            idToken: googleKey.idToken,
+                            accessToken: googleKey.accessToken)
+                            .then((signedInUser) {
+                          print('Signed in as ${signedInUser.displayName}');
+                          Navigator.of(context).pushReplacementNamed(
+                              '/homepage');
+                        }).catchError((e) {
+                          print(e);
+                        });
+                      }).catchError((e) {
+                        print(e);
                       });
-                    }).catchError((e){
+                    }).catchError((e) {
                       print(e);
-                    }
-                  }).catchError((e){
-                    print(e);
-                  });
-            ],
+                    });
+                  })],
           ),
         ),
 
@@ -181,4 +186,5 @@ class _MyHomePageState extends  State<MyHomePage>{
     );
   }
 }
+
 

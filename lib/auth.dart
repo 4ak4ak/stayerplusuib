@@ -1,7 +1,5 @@
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'login_page.dart';
-import 'home_page.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 abstract class BaseAuth{
@@ -9,7 +7,7 @@ abstract class BaseAuth{
   Future<String> createUserWithEmailAndPassword(String email, String password );
   Future<String> currentUser();
   Future<void> signOut();
-  Future<bool> _loginUser();
+ // Future<bool> _loginUser();
 
 
 }
@@ -38,14 +36,14 @@ class Auth implements BaseAuth{
 
   }
 
-  Future<bool> _loginUser() async{
-    final api = await  FBApi.signInWithGoogle();
-    if(api != null){
-      return true;
-    }else{
-      return false;
-    }
-  }
+//  Future<bool> _loginUser() async{
+//    final api = await  FBApi.signInWithGoogle();
+//    if(api != null){
+//      return true;
+//    }else{
+//      return false;
+//    }
+//  }
 
 
 
