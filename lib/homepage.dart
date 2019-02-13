@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
 
 class Dashboard extends StatefulWidget {
@@ -9,19 +10,50 @@ class Dashboard extends StatefulWidget {
 
   }
 
-class _DashboardState extends State<Dashboard>{
+class _DashboardState extends State<Dashboard> {
 
+  Material MyItems(IconData icon, String heading, int color){
+    return Material(
+      color: Colors.white,
+      elevation: 14.0,
+      shadowColor: Color(0x802196F3),
+      borderRadius: BorderRadius.circular(24.0),
+      child: Center(
+        child: Padding(padding: const EdgeInsets.all(8.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Text(heading,
+                  style: TextStyle(
+                    color: new Color(color),
+                fontSize: 20.0),),
+                Material(
+                  color: new Color(color),
+                  borderRadius: BorderRadius.circular(24.0),
+                  child: Padding(padding: const EdgeInsets.all(16.0),
+                  child: Icon(icon, color: Colors.white, size: 30.0,),),
+                )
+              ],
+            )
+          ],
+        ),),
+      ),
+    );
+  }
 
 
   String uid = '';
 
-  getUid(){}
+  getUid() {}
 
   @override
-  void initState(){
+  void initState() {
     this.uid = '';
-    FirebaseAuth.instance.currentUser().then((val){
-      setState((){
+    FirebaseAuth.instance.currentUser().then((val) {
+      setState(() {
         this.uid = val.uid;
       });
     }).catchError((e) {
@@ -32,83 +64,102 @@ class _DashboardState extends State<Dashboard>{
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
-//    return new Scaffold(
-//      appBar: AppBar(
-//        title: new Text('Dashboard'),
-//        centerTitle: true,
-//      ),
-//      body: Center(
-//        child: Container(
-//          child: new Column(
-//            mainAxisAlignment: MainAxisAlignment.center,
-//            children: <Widget>[
-//              new Text('You are logged in as ${uid}'),
-//              SizedBox(
-//                height: 15.0,
-//
-//              ),
-//              new OutlineButton(
-//                borderSide: BorderSide(
-//                  color: Colors.red, style: BorderStyle.solid, width: 3.0
-//                ),
-//                child: Text('Logout'),
-//                onPressed: (){
-//                  FirebaseAuth.instance.signOut().then((action){
-//                    Navigator
-//                    .of(context)
-//                        .pushReplacementNamed('/landinpage');
-//                  }).catchError((e) {
-//                    print(e);
-//                  });
-//                },
-//              )
-//            ],
-//          ),
-//        ),
-//      ),
-//    );
-
-
     return new Scaffold(
       body: CustomScrollView(
           slivers: <Widget>[
             SliverAppBar(
               actions: <Widget>[
-                new FlatButton(child: new Text('Log out', style: new TextStyle(fontSize: 10.0, color: Colors.white)),onPressed:  () {
-                  FirebaseAuth.instance.signOut().then((action) {
-                    Navigator
-                        .of(context)
-                        .pushReplacementNamed('/landinpage');
-                  }).catchError((e) {
-                    print(e);
-                  });
-                }),
+                new FlatButton(child: new Text('Log out',
+                    style: new TextStyle(fontSize: 10.0, color: Colors.white)),
+                    onPressed: () {
+                      FirebaseAuth.instance.signOut().then((action) {
+                        Navigator
+                            .of(context)
+                            .pushReplacementNamed('/landinpage');
+                      }).catchError((e) {
+                        print(e);
+                      });
+                    }),
               ],
               expandedHeight: 200.0,
               floating: false,
               pinned: true,
               flexibleSpace: FlexibleSpaceBar(
-                title: Text('Menu'),
-                background: Image.asset('assets/menuBack.jpg', fit: BoxFit.cover),
+                title: Text('Stayer+', textAlign: TextAlign.center),
+                background: Image.asset(
+                    'assets/menuBack.jpg', fit: BoxFit.cover),
 
               ),
             ),
             SliverFillRemaining(
-              child: new Container(
-                child: FlatButton(
-                    onPressed: (){
-
-                    },
-                    child: new Text('Content', style: TextStyle(fontSize: 20.0),)
+              child: StaggeredGridView.count (
+                crossAxisCount: 2,
+                crossAxisSpacing: 12.0,
+                mainAxisSpacing: 12.0,
+              padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+              children: <Widget>[
+                InkWell(
+                  onTap: (){
+                  Navigator.of(context).pushNamed('/profile');
+                },
+                  child: MyItems(
+                      Icons.account_circle, "Профиль", 0xffed622b),
                 ),
+                InkWell(
+                  onTap: (){
+                  Navigator.of(context).pushNamed('/community');
+                },
+                  child: MyItems(Icons.group, "Коммьюнити", 0xffed622b),
+                ),
+                InkWell(
+                  onTap: (){
+                  Navigator.of(context).pushNamed('/statistic');
+                },
+                child:  MyItems(Icons.trending_down, "Статистика", 0xffed622b),
+                  ),
+                InkWell(
+                  onTap: (){
+                    Navigator.of(context).pushNamed('/trecker');
+                },
+                child: MyItems(Icons.track_changes, "Трекер", 0xffed622b),
+                ),
+                InkWell(
+                  onTap: (){
+                    Navigator.of(context).pushNamed('/record');
+                },
+                child: MyItems(Icons.star, "Рекорды", 0xffed622b),
+                ),
+                InkWell(
+                  onTap: (){
+                    Navigator.of(context).pushNamed('/map');
+                  },
+                  child: MyItems(Icons.map, "Карты", 0xffed622b),
+                )
+
+
+
+              ],
+              staggeredTiles: [
+                StaggeredTile.extent(1, 120.0),
+                StaggeredTile.extent(1, 120.0),
+                StaggeredTile.extent(1, 120.0),
+                StaggeredTile.extent(1, 120.0),
+                StaggeredTile.extent(1, 120.0),
+                StaggeredTile.extent(1, 120.0),
+              ],),
+
+
+
 
               ),
 
-            ),
+
+
           ]),
-    );}
-
-
+    );
   }
+}
+
+
+
 

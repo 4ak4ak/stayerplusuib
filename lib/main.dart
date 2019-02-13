@@ -7,6 +7,12 @@ import 'homepage.dart';
 import 'login_page.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'signuppage.dart';
+import 'profile.dart';
+import 'trecker_page.dart';
+import 'statistic_page.dart';
+import 'record_page.dart';
+import 'map_page.dart';
+import 'community_page.dart';
 
 
 void main(){
@@ -29,7 +35,13 @@ class MyApp extends StatelessWidget{
       routes: <String, WidgetBuilder>{
         '/homepage':(BuildContext context) => new Dashboard(),
         '/landinpage': (BuildContext context) => new MyApp(),
-        '/signup': (BuildContext context) => new SignupPage()
+        '/signup': (BuildContext context) => new SignupPage(),
+        '/profile':(BuildContext context) => new Profile(),
+        '/community': (BuildContext context) => new Community(),
+        '/trecker': (BuildContext context) => new Trecker(),
+        '/record': (BuildContext context) => new Records(),
+        '/statistic': (BuildContext context) => new Statistic(),
+        '/map': (BuildContext context) => new Map()
       }
 
     );
@@ -91,6 +103,11 @@ class _MyHomePageState extends  State<MyHomePage>{
           return new AlertDialog(
             title: Text('Enter sms code'),
             content: TextField(
+              decoration: new InputDecoration(
+
+                hintText: "123456"
+              ),
+
                 onChanged: (value){
                   this.smsCode = value;
                 }
@@ -118,6 +135,7 @@ class _MyHomePageState extends  State<MyHomePage>{
   }
 
   signIn(){
+
     FirebaseAuth.instance
         .signInWithPhoneNumber(verificationId: verificationId, smsCode: smsCode)
         .then((user){
@@ -141,10 +159,16 @@ class _MyHomePageState extends  State<MyHomePage>{
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               TextField(
-                decoration: InputDecoration(hintText: 'Enter Phone num'),
+                decoration: InputDecoration(hintText: '+7 7xx xxx xx xx'),
                 onChanged: (value){
-                  this.phoneNum = value;
+                 // if(this.phoneNum.length == 10)
+
+                    this.phoneNum = value;
+
+
+
                 },
+
 
               ),
               SizedBox(height: 10.0),
