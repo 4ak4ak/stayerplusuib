@@ -161,12 +161,7 @@ class _MyHomePageState extends  State<MyHomePage>{
               TextField(
                 decoration: InputDecoration(hintText: '+7 7xx xxx xx xx'),
                 onChanged: (value){
-                 // if(this.phoneNum.length == 10)
-
                     this.phoneNum = value;
-
-
-
                 },
 
 
