@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'homepage.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'signuppage.dart';
-import 'profile.dart';
+import 'profile_page.dart';
 import 'trecker_page.dart';
 import 'statistic_page.dart';
 import 'record_page.dart';
@@ -33,7 +33,7 @@ class MyApp extends StatelessWidget{
         '/homepage':(BuildContext context) => new Dashboard(),
         '/landinpage': (BuildContext context) => new MyApp(),
         '/signup': (BuildContext context) => new SignupPage(),
-        '/profile':(BuildContext context) => new Profile(),
+        '/profile':(BuildContext context) => new ProfilePage(),
         '/community': (BuildContext context) => new Community(),
         '/trecker': (BuildContext context) => new Trecker(),
         '/record': (BuildContext context) => new Records(),

@@ -12,8 +12,7 @@ class Dashboard extends StatefulWidget {
 
 class _DashboardState extends State<Dashboard> {
 
-  final _primaryColor = Color(0xFFDA4838);
-  final _appBarHeight = 240.0;
+  final _appBarHeight = 300.0;
 
   Material items(IconData icon, String heading){
     return Material(
@@ -30,7 +29,7 @@ class _DashboardState extends State<Dashboard> {
                 Material(
                   color: Colors.transparent,
                   child: Padding(padding: const EdgeInsets.all(8.0),
-                  child: Icon(icon, color: _primaryColor, size: 40.0,),),
+                  child: Icon(icon, color: Color(0xFFE34043), size: 40.0,),),
                 ),
                 Text(heading,
                   style: TextStyle(
@@ -102,7 +101,7 @@ class _DashboardState extends State<Dashboard> {
                         child: Image.asset(
                           'assets/menuBack.jpg',
                           fit: BoxFit.cover,
-                          color: _primaryColor.withAlpha(150),
+                          color: Color(0x88a30e0e),
                           colorBlendMode: BlendMode.hardLight,
                         ),
                       ),
