@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:flutter_sparkline/flutter_sparkline.dart';
-import 'package:flutter_circular_chart/flutter_circular_chart.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class Statistic extends StatefulWidget {

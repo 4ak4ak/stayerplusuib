@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:stayerplusuib/home_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'auth.dart';
-import 'root_page.dart';
 import 'homepage.dart';
-import 'login_page.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'signuppage.dart';
 import 'profile.dart';
@@ -79,9 +75,10 @@ class _MyHomePageState extends  State<MyHomePage>{
 
     };
 
-    final PhoneVerificationCompleted verifiedSuccess = (FirebaseUser user){
+    final PhoneVerificationCompleted verifiedSuccess = (AuthCredential phoneAuthCredential){
       print('verified');
     };
+
     final PhoneVerificationFailed veriFailed = (AuthException exception){
       print('${exception.message}');
     };
@@ -136,9 +133,13 @@ class _MyHomePageState extends  State<MyHomePage>{
 
   signIn(){
 
+    final credential = PhoneAuthProvider.getCredential(
+        verificationId: verificationId,
+        smsCode: smsCode);
+
     FirebaseAuth.instance
-        .signInWithPhoneNumber(verificationId: verificationId, smsCode: smsCode)
-        .then((user){
+        .signInWithCredential(credential)
+        .then((user) {
       Navigator.of(context).pushReplacementNamed('/homepage');
     }).catchError((e){
       print(e);
@@ -180,10 +181,13 @@ class _MyHomePageState extends  State<MyHomePage>{
                   onPressed: () {
                     googleAuth.signIn().then((result) {
                       result.authentication.then((googleKey) {
-                        FirebaseAuth.instance
-                            .signInWithGoogle(
+
+                        final credential = GoogleAuthProvider.getCredential(
                             idToken: googleKey.idToken,
-                            accessToken: googleKey.accessToken)
+                            accessToken: googleKey.accessToken);
+
+                        FirebaseAuth.instance
+                            .signInWithCredential(credential)
                             .then((signedInUser) {
                           print('Signed in as ${signedInUser.displayName}');
                           Navigator.of(context).pushReplacementNamed(

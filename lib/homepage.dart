@@ -12,7 +12,7 @@ class Dashboard extends StatefulWidget {
 
 class _DashboardState extends State<Dashboard> {
 
-  Material MyItems(IconData icon, String heading, int color){
+  Material items(IconData icon, String heading, int color){
     return Material(
       color: Colors.white,
       elevation: 14.0,
@@ -102,38 +102,38 @@ class _DashboardState extends State<Dashboard> {
                   onTap: (){
                   Navigator.of(context).pushNamed('/profile');
                 },
-                  child: MyItems(
+                  child: items(
                       Icons.account_circle, "Профиль", 0xffed622b),
                 ),
                 InkWell(
                   onTap: (){
                   Navigator.of(context).pushNamed('/community');
                 },
-                  child: MyItems(Icons.group, "Коммьюнити", 0xffed622b),
+                  child: items(Icons.group, "Коммьюнити", 0xffed622b),
                 ),
                 InkWell(
                   onTap: (){
                   Navigator.of(context).pushNamed('/statistic');
                 },
-                child:  MyItems(Icons.trending_down, "Статистика", 0xffed622b),
+                child:  items(Icons.trending_down, "Статистика", 0xffed622b),
                   ),
                 InkWell(
                   onTap: (){
                     Navigator.of(context).pushNamed('/trecker');
                 },
-                child: MyItems(Icons.track_changes, "Трекер", 0xffed622b),
+                child: items(Icons.track_changes, "Трекер", 0xffed622b),
                 ),
                 InkWell(
                   onTap: (){
                     Navigator.of(context).pushNamed('/record');
                 },
-                child: MyItems(Icons.star, "Рекорды", 0xffed622b),
+                child: items(Icons.star, "Рекорды", 0xffed622b),
                 ),
                 InkWell(
                   onTap: (){
                     Navigator.of(context).pushNamed('/map');
                   },
-                  child: MyItems(Icons.map, "Карты", 0xffed622b),
+                  child: items(Icons.map, "Карты", 0xffed622b),
                 )
 
 

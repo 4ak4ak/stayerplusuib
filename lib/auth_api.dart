@@ -17,7 +17,11 @@ class  FBApi{
     final GoogleSignInAccount googleUser = await _googleSignIn.signIn();
     final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
 
-    final FirebaseUser user  = await _auth.signInWithGoogle(idToken: googleAuth.idToken, accessToken: googleAuth.accessToken);
+    final credential = GoogleAuthProvider.getCredential(
+        idToken: googleAuth.idToken,
+        accessToken: googleAuth.accessToken);
+
+    final FirebaseUser user  = await _auth.signInWithCredential(credential);
 
     assert(user.email != null);
     assert(user.displayName != null);
