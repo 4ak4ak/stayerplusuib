@@ -26,7 +26,8 @@ class MyApp extends StatelessWidget{
       theme:  new ThemeData(
         primarySwatch: Colors.blue,
       ),
-     // home: new RootPage(auth: new Auth()),
+      debugShowCheckedModeBanner: false,
+      // home: new RootPage(auth: new Auth()),
       home: MyHomePage(),
       routes: <String, WidgetBuilder>{
         '/homepage':(BuildContext context) => new Dashboard(),

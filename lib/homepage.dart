@@ -12,12 +12,13 @@ class Dashboard extends StatefulWidget {
 
 class _DashboardState extends State<Dashboard> {
 
-  Material items(IconData icon, String heading, int color){
+  final _primaryColor = Color(0xFFDA4838);
+  final _appBarHeight = 240.0;
+
+  Material items(IconData icon, String heading){
     return Material(
       color: Colors.white,
-      elevation: 14.0,
-      shadowColor: Color(0x802196F3),
-      borderRadius: BorderRadius.circular(24.0),
+      borderRadius: BorderRadius.circular(10.0),
       child: Center(
         child: Padding(padding: const EdgeInsets.all(8.0),
         child: Row(
@@ -26,16 +27,16 @@ class _DashboardState extends State<Dashboard> {
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
+                Material(
+                  color: Colors.transparent,
+                  child: Padding(padding: const EdgeInsets.all(8.0),
+                  child: Icon(icon, color: _primaryColor, size: 40.0,),),
+                ),
                 Text(heading,
                   style: TextStyle(
-                    color: new Color(color),
-                fontSize: 20.0),),
-                Material(
-                  color: new Color(color),
-                  borderRadius: BorderRadius.circular(24.0),
-                  child: Padding(padding: const EdgeInsets.all(16.0),
-                  child: Icon(icon, color: Colors.white, size: 30.0,),),
-                )
+                      color: Colors.black87,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 16.0),),
               ],
             )
           ],
@@ -65,12 +66,14 @@ class _DashboardState extends State<Dashboard> {
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
+      backgroundColor: Color(0xFF206BD0) ,
       body: CustomScrollView(
           slivers: <Widget>[
             SliverAppBar(
+              backgroundColor: Color(0xFF206BD0),
               actions: <Widget>[
-                new FlatButton(child: new Text('Log out',
-                    style: new TextStyle(fontSize: 10.0, color: Colors.white)),
+                IconButton(
+                  icon: Icon(Icons.exit_to_app),
                     onPressed: () {
                       FirebaseAuth.instance.signOut().then((action) {
                         Navigator
@@ -79,16 +82,42 @@ class _DashboardState extends State<Dashboard> {
                       }).catchError((e) {
                         print(e);
                       });
-                    }),
+                    }
+                )
               ],
-              expandedHeight: 200.0,
+              expandedHeight: _appBarHeight,
               floating: false,
               pinned: true,
               flexibleSpace: FlexibleSpaceBar(
-                title: Text('Stayer+', textAlign: TextAlign.center),
-                background: Image.asset(
-                    'assets/menuBack.jpg', fit: BoxFit.cover),
-
+                title: Text('Меню'),
+                centerTitle: true,
+                collapseMode: CollapseMode.pin,
+                background: Container(
+                  padding: EdgeInsets.only(bottom: 80),
+                  child: Stack(
+                    children: <Widget>[
+                      Container(
+                        width: double.infinity,
+                        height: double.infinity,
+                        child: Image.asset(
+                          'assets/menuBack.jpg',
+                          fit: BoxFit.cover,
+                          color: _primaryColor.withAlpha(150),
+                          colorBlendMode: BlendMode.hardLight,
+                        ),
+                      ),
+                      Center(
+                        child: Text(
+                          'Stayer+',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 35.0,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
             ),
             SliverFillRemaining(
@@ -96,44 +125,44 @@ class _DashboardState extends State<Dashboard> {
                 crossAxisCount: 2,
                 crossAxisSpacing: 12.0,
                 mainAxisSpacing: 12.0,
-              padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+              padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
               children: <Widget>[
                 InkWell(
                   onTap: (){
                   Navigator.of(context).pushNamed('/profile');
                 },
                   child: items(
-                      Icons.account_circle, "Профиль", 0xffed622b),
+                      Icons.account_circle, "Профиль"),
                 ),
                 InkWell(
                   onTap: (){
                   Navigator.of(context).pushNamed('/community');
                 },
-                  child: items(Icons.group, "Коммьюнити", 0xffed622b),
+                  child: items(Icons.group, "Коммьюнити"),
                 ),
                 InkWell(
                   onTap: (){
                   Navigator.of(context).pushNamed('/statistic');
                 },
-                child:  items(Icons.trending_down, "Статистика", 0xffed622b),
+                child:  items(Icons.trending_down, "Статистика"),
                   ),
                 InkWell(
                   onTap: (){
                     Navigator.of(context).pushNamed('/trecker');
                 },
-                child: items(Icons.track_changes, "Трекер", 0xffed622b),
+                child: items(Icons.track_changes, "Трекер"),
                 ),
                 InkWell(
                   onTap: (){
                     Navigator.of(context).pushNamed('/record');
                 },
-                child: items(Icons.star, "Рекорды", 0xffed622b),
+                child: items(Icons.star, "Рекорды"),
                 ),
                 InkWell(
                   onTap: (){
                     Navigator.of(context).pushNamed('/map');
                   },
-                  child: items(Icons.map, "Карты", 0xffed622b),
+                  child: items(Icons.map, "Карты"),
                 )
 
 
