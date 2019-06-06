@@ -1,11 +1,13 @@
 import 'dart:async';
+import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'homepage.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+
+import 'homepage.dart';
 import 'signuppage.dart';
 import 'profile_page.dart';
-import 'trecker_page.dart';
+import 'tracker_page.dart';
 import 'statistic_page.dart';
 import 'record_page.dart';
 import 'map_page.dart';
@@ -13,9 +15,21 @@ import 'community_page.dart';
 
 
 void main(){
-  runApp(new MyApp());
-
+  _setPreferredOrientation()
+      .then((_) => runApp(new MyApp()));
 }
+
+Future<void> _setPreferredOrientation() {
+  return SystemChrome.setPreferredOrientations(_getPortraitOrientations());
+}
+
+List<DeviceOrientation> _getPortraitOrientations() {
+  return [
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ];
+}
+
 
 class MyApp extends StatelessWidget{
 
@@ -36,7 +50,7 @@ class MyApp extends StatelessWidget{
         '/signup': (BuildContext context) => new SignupPage(),
         '/profile':(BuildContext context) => new ProfilePage(),
         '/community': (BuildContext context) => new Community(),
-        '/trecker': (BuildContext context) => new Trecker(),
+        '/trecker': (BuildContext context) => new TrackerPage(),
         '/record': (BuildContext context) => new Records(),
         '/statistic': (BuildContext context) => new Statistic(),
         '/map': (BuildContext context) => new Map()

@@ -167,7 +167,7 @@ class _ProfilePageState extends State<ProfilePage> {
       _loading = true;
     });
 
-    DataModule.dataUtil.getCurrentUser()
+    return DataModule.dataUtil.getCurrentUser()
         .then((user) {
 
       _userDidLoad(user);
