@@ -1,7 +1,13 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
-import 'model/profile.dart';
+import 'package:modal_progress_hud/modal_progress_hud.dart';
+
+import 'model/user.dart';
+import 'model/dictionary.dart';
 import 'ui/button.dart';
 import 'ui/text_field.dart';
+
+import 'dependencies/application_dependencies.dart';
 
 class ProfilePage extends StatefulWidget {
   @override
@@ -11,27 +17,88 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
 
   final _appBarHeight = 300.0;
-  Profile _profile = Profile()..firstName='Айдос'..lastName='Б';
+  bool _loading = true;
+  bool _modified = false;
+  User _user;
+  User _originalUser;
+  Dictionary _dictionary;
 
   GlobalKey<FormState> _formKey;
-  TextEditingController _nameController;
+  TextEditingController _nicknameController;
   TextEditingController _emailController;
-  TextEditingController _phoneController;
-  TextEditingController _ageController;
-  TextEditingController _sexController;
-  TextEditingController _weightController;
+
+  static List<DropdownMenuItem<int>> _yearMenuItems;
 
   @override
   void initState() {
     super.initState();
 
     _formKey = GlobalKey<FormState>();
-    _nameController = TextEditingController();
+
+    _nicknameController = TextEditingController();
+    _nicknameController.addListener(() {
+      _user.nickname = _nicknameController.text;
+      _checkModified();
+    });
+
     _emailController = TextEditingController();
-    _phoneController = TextEditingController();
-    _ageController = TextEditingController();
-    _sexController = TextEditingController();
-    _weightController = TextEditingController();
+    _emailController.addListener(() {
+      _user.email = _emailController.text;
+      _checkModified();
+    });
+
+    _getUser();
+  }
+
+  Future<void>_getUser() {
+    setState(() {
+      _loading = true;
+    });
+
+    DataModule.dataUtil.getCurrentUser()
+        .then((user) {
+
+      _userDidLoad(user);
+
+      return _getDictionary();
+    })
+        .catchError((error) {
+      setState(() {
+        _loading = false;
+      });
+
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: new Text("Ошибка"),
+            content: new Text("Возникли проблемы при загрузке данных"),
+            actions: <Widget>[
+              new FlatButton(
+                child: new Text("Закрыть"),
+                onPressed: () {
+                  Navigator.popUntil(context, ModalRoute.withName('/homepage'));
+                },
+              ),
+            ],
+          );
+        },
+      );
+    });
+  }
+
+  Future<void> _getDictionary() {
+    setState(() {
+      _loading = true;
+    });
+
+    return DataModule.dataUtil.getDictionary()
+        .then((dict) {
+      _dictionary = dict;
+      setState(() {
+        _loading = false;
+      });
+    });
   }
 
   Widget _getBody() {
@@ -48,7 +115,9 @@ class _ProfilePageState extends State<ProfilePage> {
           child: SPButton(
             text: 'Изменить',
             colorScheme: SPButton.COLOR_SCHEME_1,
-            onPressed: (){},
+            onPressed: !_modified ? null : () {
+              _setUser();
+            },
           ),
         ),
       ],
@@ -59,26 +128,22 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     return new Scaffold(
       backgroundColor: Colors.white ,
-      body: _getBody(),
+      body: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () {
+          _hideKeyboard();
+        },
+        child: ModalProgressHUD(
+          child: _getBody(),
+          inAsyncCall: _loading,
+        ),
+      ),
     );
   }
 
-  String _getTitleText() {
-    String name = '';
-    if (_profile.firstName != null && _profile.firstName.isNotEmpty) {
-      name += _profile.firstName;
-      name += ' ';
-    }
-    if (_profile.lastName != null && _profile.lastName.isNotEmpty) {
-      name += _profile.lastName[0];
-      name += '.';
-    }
-    return name;
-  }
-
-  Widget _getTitle(){
+  Widget _getTitle() {
     return Text(
-      _getTitleText(),
+      _originalUser?.nickname ?? '',
       style: TextStyle(
         color: Colors.black,
       ),
@@ -155,66 +220,72 @@ class _ProfilePageState extends State<ProfilePage> {
     final widgets = List<Widget>();
 
     widgets.add(
-      _getField(
-        hint: 'ФИО',
-        controller: _nameController,
+      _getTextField(
+        hint: 'Никнейм',
+        value: _user == null ? '' : _user.nickname,
+        controller: _nicknameController,
+        keyboardType: TextInputType.text,
         validator: (value) {
           return null;
         },
-        autovalidate: true,
       ),
     );
 
     widgets.add(
-      _getField(
+        _getDropDownField(
+            label: 'Пол',
+            value: _user == null || _user.sex.isEmpty ? null : _user.sex,
+            items: _dictionary == null ? List() : _dictionary.sexList.map((item) {
+              return DropdownMenuItem(
+                value: item.id,
+                child: Text(item.name),
+              );
+            }).toList(),
+            onChanged: (value) {
+              setState(() {
+                _user.sex = value;
+              });
+              _checkModified();
+            }));
+
+    widgets.add(
+        _getDropDownField(
+            label: 'Год рождения',
+            value: _user == null || _user.bornYear == 0 ? null : _user.bornYear,
+            items: _getYearMenuItems(),
+            onChanged: (value) {
+              setState(() {
+                _user.bornYear = value;
+              });
+              _checkModified();
+            }));
+
+    widgets.add(
+        _getDropDownField(
+            label: 'Город',
+            value: _user == null || _user.city.isEmpty ? null : _user.city,
+            items: _dictionary == null ? List() : _dictionary.cities.map((item) {
+              return DropdownMenuItem(
+                value: item.id,
+                child: Text(item.name),
+              );
+            }).toList(),
+            onChanged: (value) {
+              setState(() {
+                _user.city = value;
+              });
+              _checkModified();
+            }));
+
+    widgets.add(
+      _getTextField(
         hint: 'Емейл',
-        controller: _emailController,
+          controller: _emailController,
+        keyboardType: TextInputType.emailAddress,
         validator: (value) {
-          return null;
-        },
-        autovalidate: true,
-      ),
-    );
-
-    widgets.add(
-      _getField(
-        hint: 'Телефон',
-        controller: _phoneController,
-        validator: (value) {
-          return null;
-        },
-        autovalidate: true,
-      ),
-    );
-
-    widgets.add(
-      _getField(
-        hint: 'Возраст',
-        controller: _ageController,
-        validator: (value) {
-          return null;
-        },
-        autovalidate: true,
-      ),
-    );
-
-    widgets.add(
-      _getField(
-        hint: 'Пол',
-        controller: _sexController,
-        validator: (value) {
-          return null;
-        },
-        autovalidate: true,
-      ),
-    );
-
-    widgets.add(
-      _getField(
-        hint: 'Вес',
-        controller: _weightController,
-        validator: (value) {
-          return null;
+          if (!_isValidEmail(value)) {
+            return 'Неверный формат';
+          }
         },
         autovalidate: true,
       ),
@@ -227,7 +298,8 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Widget _getField({
+  Widget _getTextField({
+    String value,
     String hint,
     TextEditingController controller,
     bool autovalidate,
@@ -235,7 +307,7 @@ class _ProfilePageState extends State<ProfilePage> {
     TextInputType keyboardType,
   }) {
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+      margin: EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
       child: SPTextField(
         controller: controller,
         keyboardType: keyboardType,
@@ -249,4 +321,134 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
+  Widget _getDropDownField({
+    String label,
+    dynamic value,
+    List<DropdownMenuItem<dynamic>> items,
+    ValueChanged onChanged
+  }) {
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
+      child: InputDecorator(
+        decoration: InputDecoration(
+            labelText: label,
+            contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 18),
+            labelStyle: TextStyle(fontSize: 18.0),
+            border: OutlineInputBorder()
+        ),
+        isEmpty: value == null,
+        child: DropdownButton(
+          isExpanded: true,
+          isDense: true,
+          underline: Container(),
+          style: TextStyle(color: Colors.black, fontSize: 18.0,),
+          value: value,
+          onChanged: onChanged,
+          items: items,
+        ),
+      ),
+    );
+  }
+
+  void _checkModified() {
+    setState(() {
+      _modified = (
+        _originalUser != null &&
+        _user != null &&
+        !_user.isEquals(_originalUser) &&
+        _user.nickname.isNotEmpty &&
+        _isValidEmail(_user.email)
+      );
+    });
+  }
+
+  String _getBornYearString() {
+    if (_user != null && _user.bornYear >= 0 && _dictionary != null) {
+      return _user.bornYear.toString();
+    }
+    return '';
+  }
+
+  void _hideKeyboard() {
+    FocusScope.of(context).requestFocus(new FocusNode());
+  }
+  
+  bool _isValidEmail(String email) {
+    return (
+        email.isEmpty ||
+        RegExp(r"^[a-zA-Z0-9.-]+@[a-zA-Z0-9-]+\.[a-zA-Z]+").hasMatch(email)
+    );
+  }
+
+  void _setUser() {
+    _hideKeyboard();
+
+    setState(() {
+      _loading = true;
+    });
+
+    DataModule.dataUtil.setUser(_user, _user.nickname != _originalUser.nickname)
+        .then((user){
+
+      _userDidLoad(user);
+
+      setState(() {
+        _loading = false;
+      });
+
+      _checkModified();
+
+      _showDialog('Профиль', 'Данные сохранены');
+    })
+        .catchError((error) {
+
+      setState(() {
+        _loading = false;
+      });
+
+      _showDialog('Ошибка', error.toString().replaceAll('Exception: ', ''));
+    });
+  }
+
+  void _userDidLoad(User user) {
+    _user = user;
+    _originalUser = User.fromUser(_user);
+    _nicknameController.text = _user.nickname;
+    _emailController.text = _user.email;
+  }
+
+  void _showDialog(String title, String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: new Text(title),
+          content: new Text(message),
+          actions: <Widget>[
+            new FlatButton(
+              child: new Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  static List<DropdownMenuItem<int>> _getYearMenuItems() {
+    if (_yearMenuItems == null) {
+      int currYear = DateTime
+          .now()
+          .year;
+
+      _yearMenuItems = List<int>.generate(100, (i) => currYear-i)
+          .map((year) => DropdownMenuItem(
+              value: year,
+              child: Text(year.toString())))
+          .toList();
+    }
+    return _yearMenuItems;
+  }
 }

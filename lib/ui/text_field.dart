@@ -19,7 +19,7 @@ class SPTextField extends StatelessWidget {
     this.validator,
     this.style,
     this.maxLines,
-    this.hint
+    this.hint,
   });
 
   @override
