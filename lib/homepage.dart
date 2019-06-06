@@ -163,9 +163,6 @@ class _DashboardState extends State<Dashboard> {
                   },
                   child: items(Icons.map, "Карты"),
                 )
-
-
-
               ],
               staggeredTiles: [
                 StaggeredTile.extent(1, 120.0),
@@ -174,15 +171,9 @@ class _DashboardState extends State<Dashboard> {
                 StaggeredTile.extent(1, 120.0),
                 StaggeredTile.extent(1, 120.0),
                 StaggeredTile.extent(1, 120.0),
-              ],),
-
-
-
-
+              ],
               ),
-
-
-
+              ),
           ]),
     );
   }

@@ -4,6 +4,7 @@ import 'package:modal_progress_hud/modal_progress_hud.dart';
 
 import 'model/user.dart';
 import 'model/dictionary.dart';
+
 import 'ui/button.dart';
 import 'ui/text_field.dart';
 
@@ -22,8 +23,6 @@ class _ProfilePageState extends State<ProfilePage> {
   User _user;
   User _originalUser;
   Dictionary _dictionary;
-
-  GlobalKey<FormState> _formKey;
   TextEditingController _nicknameController;
   TextEditingController _emailController;
 
@@ -32,8 +31,6 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   void initState() {
     super.initState();
-
-    _formKey = GlobalKey<FormState>();
 
     _nicknameController = TextEditingController();
     _nicknameController.addListener(() {
@@ -50,55 +47,21 @@ class _ProfilePageState extends State<ProfilePage> {
     _getUser();
   }
 
-  Future<void>_getUser() {
-    setState(() {
-      _loading = true;
-    });
-
-    DataModule.dataUtil.getCurrentUser()
-        .then((user) {
-
-      _userDidLoad(user);
-
-      return _getDictionary();
-    })
-        .catchError((error) {
-      setState(() {
-        _loading = false;
-      });
-
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: new Text("Ошибка"),
-            content: new Text("Возникли проблемы при загрузке данных"),
-            actions: <Widget>[
-              new FlatButton(
-                child: new Text("Закрыть"),
-                onPressed: () {
-                  Navigator.popUntil(context, ModalRoute.withName('/homepage'));
-                },
-              ),
-            ],
-          );
+  @override
+  Widget build(BuildContext context) {
+    return new Scaffold(
+      backgroundColor: Colors.white ,
+      body: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () {
+          _hideKeyboard();
         },
-      );
-    });
-  }
-
-  Future<void> _getDictionary() {
-    setState(() {
-      _loading = true;
-    });
-
-    return DataModule.dataUtil.getDictionary()
-        .then((dict) {
-      _dictionary = dict;
-      setState(() {
-        _loading = false;
-      });
-    });
+        child: ModalProgressHUD(
+          child: _getBody(),
+          inAsyncCall: _loading,
+        ),
+      ),
+    );
   }
 
   Widget _getBody() {
@@ -121,23 +84,6 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
         ),
       ],
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return new Scaffold(
-      backgroundColor: Colors.white ,
-      body: GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onTap: () {
-          _hideKeyboard();
-        },
-        child: ModalProgressHUD(
-          child: _getBody(),
-          inAsyncCall: _loading,
-        ),
-      ),
     );
   }
 
@@ -214,6 +160,57 @@ class _ProfilePageState extends State<ProfilePage> {
         ],
       ),
     );
+  }
+
+  Future<void>_getUser() {
+    setState(() {
+      _loading = true;
+    });
+
+    DataModule.dataUtil.getCurrentUser()
+        .then((user) {
+
+      _userDidLoad(user);
+
+      return _getDictionary();
+    })
+        .catchError((error) {
+      setState(() {
+        _loading = false;
+      });
+
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: new Text("Ошибка"),
+            content: new Text("Возникли проблемы при загрузке данных"),
+            actions: <Widget>[
+              new FlatButton(
+                child: new Text("Закрыть"),
+                onPressed: () {
+                  Navigator.popUntil(context, ModalRoute.withName('/homepage'));
+                },
+              ),
+            ],
+          );
+        },
+      );
+    });
+  }
+
+  Future<void> _getDictionary() {
+    setState(() {
+      _loading = true;
+    });
+
+    return DataModule.dataUtil.getDictionary()
+        .then((dict) {
+      _dictionary = dict;
+      setState(() {
+        _loading = false;
+      });
+    });
   }
 
   Widget _getFields() {
@@ -362,17 +359,10 @@ class _ProfilePageState extends State<ProfilePage> {
     });
   }
 
-  String _getBornYearString() {
-    if (_user != null && _user.bornYear >= 0 && _dictionary != null) {
-      return _user.bornYear.toString();
-    }
-    return '';
-  }
-
   void _hideKeyboard() {
     FocusScope.of(context).requestFocus(new FocusNode());
   }
-  
+
   bool _isValidEmail(String email) {
     return (
         email.isEmpty ||
