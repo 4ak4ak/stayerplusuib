@@ -55,20 +55,16 @@ class TrackerUtil {
         onError: _onError, onDone: _onDone, cancelOnError: true);
 
     bg.BackgroundGeolocation.onLocation(_onLocation, _onLocationError);
-    bg.BackgroundGeolocation.onMotionChange(_onMotionChange);
-    bg.BackgroundGeolocation.onActivityChange(_onActivityChange);
-    bg.BackgroundGeolocation.onProviderChange(_onProviderChange);
-    bg.BackgroundGeolocation.onConnectivityChange(_onConnectivityChange);
 
     bg.BackgroundGeolocation.ready(bg.Config(
         desiredAccuracy: bg.Config.DESIRED_ACCURACY_HIGH,
-        distanceFilter: 1.0,
-        stopOnTerminate: false,
-        startOnBoot: true,
+        distanceFilter: 0,
+        stopOnTerminate: true,
+        startOnBoot: false,
         debug: true,
-        logLevel: bg.Config.LOG_LEVEL_VERBOSE,
         reset: true,
-        isMoving: true,
+        locationUpdateInterval: 1000,
+        logLevel: bg.Config.LOG_LEVEL_VERBOSE,
     )).then((bg.State state) {
       print('[ready]: ${state.toString()}');
     }).catchError((error) {
@@ -80,19 +76,20 @@ class TrackerUtil {
     return _stateSubject.stream;
   }
 
-  void start() {
+  void start() async {
     if (_status == TrackerStatus.stopped) {
 
       _status = TrackerStatus.started;
 
-      bg.BackgroundGeolocation.start().then((_){
-        _startSegment();
+      await bg.BackgroundGeolocation.stop();
+      await bg.BackgroundGeolocation.start();
 
-        _totalSeconds = 0;
-        _totalSteps = 0;
+      _startSegment();
 
-        _addState();
-      });
+      _totalSeconds = 0;
+      _totalSteps = 0;
+
+      _addState();
 
     } else {
       print ('tracker is not stopped');
@@ -185,6 +182,7 @@ class TrackerUtil {
   }
 
   void _startSegment() {
+    bg.BackgroundGeolocation.setOdometer(0.0);
     _segmentStartSteps = 0;
     _segmentLastSteps = 0;
     _segmentDistance = 0.0;
@@ -258,21 +256,5 @@ class TrackerUtil {
 
   void _onLocationError(bg.LocationError error) {
     print('[location] ERROR - $error');
-  }
-
-  void _onMotionChange(bg.Location location) {
-    print('[motionchange] - $location');
-  }
-
-  void _onActivityChange(bg.ActivityChangeEvent event) {
-    print('[activitychange] - $event');
-  }
-
-  void _onProviderChange(bg.ProviderChangeEvent event) {
-    print('$event');
-  }
-
-  void _onConnectivityChange(bg.ConnectivityChangeEvent event) {
-    print('$event');
   }
 }

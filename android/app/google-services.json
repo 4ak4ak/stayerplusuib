@@ -15,6 +15,22 @@
       },
       "oauth_client": [
         {
+          "client_id": "55500466460-g63pj3hp8vco6avmg1sp99rtkjngo1c8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.uibkaznu.stayerplusuib",
+            "certificate_hash": "f1b107c16f4b2569d219542bd7640652260296a9"
+          }
+        },
+        {
+          "client_id": "55500466460-qvmbubnps2g8rch64hmat83qoijd7b0o.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.uibkaznu.stayerplusuib",
+            "certificate_hash": "0ee386e883aa8dacf7a04490d494c646edd52072"
+          }
+        },
+        {
           "client_id": "55500466460-8b37jrdil1chcfkan64f5alphgllukuq.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
@@ -33,20 +49,20 @@
         }
       ],
       "services": {
-        "analytics_service": {
-          "status": 1
-        },
         "appinvite_service": {
-          "status": 2,
           "other_platform_oauth_client": [
             {
               "client_id": "55500466460-j0iq31kutn5s822j711re36rljddush5.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "55500466460-edm19hp364om782p7gncbit3dobs199n.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.uibkaznu.stayerplusuib"
+              }
             }
           ]
-        },
-        "ads_service": {
-          "status": 2
         }
       }
     }
