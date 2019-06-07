@@ -33,8 +33,6 @@
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
-	<key>NSMotionUsageDescription</key>
-	<string>Приложение будет отслеживать ваши прогулки или пробежки</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>
@@ -58,9 +56,11 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
-	<key>Privacy - Location Always and When In Use Description</key>
+	<key>NSMotionUsageDescription</key>
+	<string>Приложение будет считать ваши шаги</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Приложение будет отслеживать ваши прогулки или пробежки</string>
-	<key>Privacy - Location When In Use Permission</key>
+	<key>NSLocationAlwaysUsageDescription</key>
 	<string>Приложение будет отслеживать ваши прогулки или пробежки</string>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>

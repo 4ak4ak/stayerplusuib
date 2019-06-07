@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'firebase_firestore_util.dart';
 import '../model/user.dart';
 import '../model/dictionary.dart';
+import '../model/run.dart';
 
 class DataUtil {
 
@@ -51,6 +52,23 @@ class DataUtil {
         .then((_) {
       _user = user;
       return _user;
+    });
+  }
+
+  Future<void> setRun(Run run) async {
+    final firebaseUser = await FirebaseAuth.instance.currentUser();
+    final runsDocument = await _firebaseUtil.getRunsDocument(firebaseUser.uid);
+
+    return runsDocument.get()
+    .then((runsSnapshot) {
+      Runs runs;
+      if (runsSnapshot.data == null) {
+        runs = Runs();
+      } else  {
+        runs = Runs.fromMap(runsSnapshot.data);
+      }
+      runs.items.add(run);
+      return runsDocument.setData(runs.toMap());
     });
   }
 

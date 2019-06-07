@@ -5,6 +5,7 @@ class FirebaseFirestoreUtil {
 
   Firestore _firestore;
   CollectionReference _usersCollection;
+  CollectionReference _runsCollection;
   CollectionReference _dictionaryCollection;
 
   FirebaseFirestoreUtil();
@@ -12,6 +13,11 @@ class FirebaseFirestoreUtil {
   Future<DocumentReference> getUserDocument(String userId) async {
     final usersCollection = await _getUserCollection();
     return usersCollection.document(userId);
+  }
+
+  Future<DocumentReference> getRunsDocument(String userId) async {
+    final runsCollection = await _getRunsCollection();
+    return runsCollection.document(userId);
   }
 
   Future<List<DocumentSnapshot>> getUserDocumentByNickname(String nickname) async {
@@ -33,6 +39,14 @@ class FirebaseFirestoreUtil {
       _usersCollection = database.collection('users');
     }
     return _usersCollection;
+  }
+
+  Future<CollectionReference> _getRunsCollection() async {
+    if (_runsCollection == null) {
+      final database = await _getFirestoreDatabase();
+      _runsCollection = database.collection('runs');
+    }
+    return _runsCollection;
   }
 
   Future<CollectionReference> _getDictionaryCollection() async {

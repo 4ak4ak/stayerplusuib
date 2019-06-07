@@ -2,12 +2,9 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:/Users/macbook/projects/pmobi/upwork/stayer/stayerplusuib/ios/GoogleService-Info.plist">
-   </FileRef>
-   <FileRef
-      location = "group:Runner/Runner.entitlements">
-   </FileRef>
-   <FileRef
       location = "group:Runner.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:Pods/Pods.xcodeproj">
    </FileRef>
 </Workspace>

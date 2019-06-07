@@ -13,6 +13,7 @@ import 'record_page.dart';
 import 'map_page.dart';
 import 'community_page.dart';
 
+import 'ui/button.dart';
 
 void main(){
   _setPreferredOrientation()
@@ -166,9 +167,25 @@ class _MyHomePageState extends  State<MyHomePage>{
   Widget build(BuildContext context) {
     // TODO: implement build
     return new Scaffold(
-      appBar: new AppBar(
-        title: new Text('PhoneAuth'),
-      ),
+      backgroundColor: Color(0xFF234486),
+//      appBar: new AppBar(
+//        title: new Text('PhoneAuth'),
+//      ),
+//    body: Stack(
+//      children: <Widget>[
+//        Image.asset('assets/background.png'),
+//        Container(
+//          width: double.infinity,
+//          height: double.infinity,
+//          child: SPButton(
+//            text: 'Войти через Google',
+//            colorScheme: SPButton.COLOR_SCHEME_1,
+//            onPressed: () {
+//            },
+//          ),
+//        ),
+//      ],
+//    )
       body: new Center(
         child: new Container(
           padding: EdgeInsets.all(25.0),

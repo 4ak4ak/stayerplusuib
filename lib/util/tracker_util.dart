@@ -53,28 +53,26 @@ class TrackerUtil {
   TrackerUtil() {
     _pedometer.stepCountStream.listen(_onData,
         onError: _onError, onDone: _onDone, cancelOnError: true);
-    _startTimer();
 
-    bg.BackgroundGeolocation.onLocation((bg.Location location) {
-      print('[location] - ${location}');
-      _segmentDistance = location.odometer;
-      _speed = location.coords.speed;
-      _addCurrentState();
-    });
+    bg.BackgroundGeolocation.onLocation(_onLocation, _onLocationError);
+    bg.BackgroundGeolocation.onMotionChange(_onMotionChange);
+    bg.BackgroundGeolocation.onActivityChange(_onActivityChange);
+    bg.BackgroundGeolocation.onProviderChange(_onProviderChange);
+    bg.BackgroundGeolocation.onConnectivityChange(_onConnectivityChange);
 
-    bg.BackgroundGeolocation.reset().then((bg.State state) {
-      bg.BackgroundGeolocation.ready(bg.Config(
-          desiredAccuracy: bg.Config.DESIRED_ACCURACY_NAVIGATION,
-          distanceFilter: 10.0,
-          stopOnTerminate: false,
-          startOnBoot: false,
-          debug: true,
-          logLevel: bg.Config.LOG_LEVEL_VERBOSE
-      )).then((bg.State state) {
-        if (state.enabled) {
-          bg.BackgroundGeolocation.stop();
-        }
-      });
+    bg.BackgroundGeolocation.ready(bg.Config(
+        desiredAccuracy: bg.Config.DESIRED_ACCURACY_HIGH,
+        distanceFilter: 1.0,
+        stopOnTerminate: false,
+        startOnBoot: true,
+        debug: true,
+        logLevel: bg.Config.LOG_LEVEL_VERBOSE,
+        reset: true,
+        isMoving: true,
+    )).then((bg.State state) {
+      print('[ready]: ${state.toString()}');
+    }).catchError((error) {
+      print('[ready] ERROR: $error');
     });
   }
   
@@ -85,15 +83,17 @@ class TrackerUtil {
   void start() {
     if (_status == TrackerStatus.stopped) {
 
-      _startSegment();
-
-      _totalSeconds = 0;
-      _totalSteps = 0;
       _status = TrackerStatus.started;
 
-      _addState();
+      bg.BackgroundGeolocation.start().then((_){
+        _startSegment();
 
-      bg.BackgroundGeolocation.start();
+        _totalSeconds = 0;
+        _totalSteps = 0;
+
+        _addState();
+      });
+
     } else {
       print ('tracker is not stopped');
     }
@@ -125,9 +125,9 @@ class TrackerUtil {
     } else {
       if (_status == TrackerStatus.paused) {
 
-        _startSegment();
-
         _status = TrackerStatus.started;
+
+        _startSegment();
 
         _addState();
 
@@ -138,12 +138,12 @@ class TrackerUtil {
     }
   }
 
-  void stop() {
+  TrackerState stop() {
     if (_status == TrackerStatus.started || _status == TrackerStatus.paused) {
 
-      bg.BackgroundGeolocation.stop();
-
       _status = TrackerStatus.stopped;
+
+      bg.BackgroundGeolocation.stop();
 
       int diffSeconds = DateTime
           .now()
@@ -156,19 +156,23 @@ class TrackerUtil {
       _totalSteps += diffSteps;
       _totalDistance += _segmentDistance;
 
-      _addState();
-
+      return _addState();
     } else {
       print ('tracker is not started or paused');
     }
+
+    return null;
   }
 
-  Future<void> _startTimer() async {
+  Future<void> _listenTime() async {
+    _segmentStartTime = DateTime.now();
     while (true) {
       if (_status == TrackerStatus.started) {
         _addCurrentState();
+        await Future.delayed(Duration(milliseconds: 100));
+      } else {
+        break;
       }
-      await Future.delayed(Duration(milliseconds: 50));
     }
   }
 
@@ -181,21 +185,21 @@ class TrackerUtil {
   }
 
   void _startSegment() {
-    _segmentStartTime = DateTime.now();
     _segmentStartSteps = 0;
     _segmentLastSteps = 0;
     _segmentDistance = 0.0;
     _speed = 0.0;
+    _listenTime();
   }
 
-  void _addCurrentState() {
+  TrackerState _addCurrentState() {
     int diffSeconds = DateTime
         .now()
         .difference(_segmentStartTime)
         .inSeconds;
     int diffSteps = _segmentLastSteps - _segmentStartSteps;
 
-    _addState(
+    return _addState(
       totalSteps: (_totalSteps + diffSteps),
       totalSeconds: (_totalSeconds + diffSeconds),
       totalDistance: (_totalDistance + _segmentDistance),
@@ -203,7 +207,7 @@ class TrackerUtil {
     );
   }
 
-  void _addState({
+  TrackerState _addState({
     TrackerStatus status,
     int totalSteps,
     int totalSeconds,
@@ -221,7 +225,11 @@ class TrackerUtil {
     );
 
     _stateSubject.add(state);
+
+    return state;
   }
+
+  // pedometer events
 
   void _onData(int stepCountValue) async {
     if (_status == TrackerStatus.started) {
@@ -238,4 +246,33 @@ class TrackerUtil {
   void _onDone() => print("pedometer done");
 
   void _onError(error) => print("pedometer error: $error");
+
+
+  // background location events
+  void _onLocation(bg.Location location) {
+    print('[location] - ${location}');
+    _segmentDistance = location.odometer;
+    _speed = location.coords.speed;
+    _addCurrentState();
+  }
+
+  void _onLocationError(bg.LocationError error) {
+    print('[location] ERROR - $error');
+  }
+
+  void _onMotionChange(bg.Location location) {
+    print('[motionchange] - $location');
+  }
+
+  void _onActivityChange(bg.ActivityChangeEvent event) {
+    print('[activitychange] - $event');
+  }
+
+  void _onProviderChange(bg.ProviderChangeEvent event) {
+    print('$event');
+  }
+
+  void _onConnectivityChange(bg.ConnectivityChangeEvent event) {
+    print('$event');
+  }
 }

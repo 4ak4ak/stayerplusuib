@@ -1,12 +1,14 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
+import 'package:flutter_alert/flutter_alert.dart';
 
 import 'model/user.dart';
 import 'model/dictionary.dart';
 
 import 'ui/button.dart';
 import 'ui/text_field.dart';
+import 'ui/dialog.dart';
 
 import 'dependencies/application_dependencies.dart';
 
@@ -179,22 +181,17 @@ class _ProfilePageState extends State<ProfilePage> {
         _loading = false;
       });
 
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: new Text("Ошибка"),
-            content: new Text("Возникли проблемы при загрузке данных"),
-            actions: <Widget>[
-              new FlatButton(
-                child: new Text("Закрыть"),
-                onPressed: () {
-                  Navigator.popUntil(context, ModalRoute.withName('/homepage'));
-                },
-              ),
-            ],
-          );
-        },
+      showAlert(context: context,
+        title: 'Ошибка',
+        body: 'Возникли проблемы при загрузке данных',
+        actions: [
+          AlertAction(
+            text: 'Закрыть',
+            onPressed: () {
+              Navigator.popUntil(context, ModalRoute.withName('/homepage'));
+            },
+          ),
+        ],
       );
     });
   }
@@ -388,7 +385,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
       _checkModified();
 
-      _showDialog('Профиль', 'Данные сохранены');
+      SPDialog.show(context, 'Профиль', 'Данные сохранены');
     })
         .catchError((error) {
 
@@ -396,7 +393,7 @@ class _ProfilePageState extends State<ProfilePage> {
         _loading = false;
       });
 
-      _showDialog('Ошибка', error.toString().replaceAll('Exception: ', ''));
+      SPDialog.show(context, 'Ошибка', error.toString().replaceAll('Exception: ', ''));
     });
   }
 
@@ -405,26 +402,6 @@ class _ProfilePageState extends State<ProfilePage> {
     _originalUser = User.fromUser(_user);
     _nicknameController.text = _user.nickname;
     _emailController.text = _user.email;
-  }
-
-  void _showDialog(String title, String message) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: new Text(title),
-          content: new Text(message),
-          actions: <Widget>[
-            new FlatButton(
-              child: new Text('OK'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
   }
 
   static List<DropdownMenuItem<int>> _getYearMenuItems() {
