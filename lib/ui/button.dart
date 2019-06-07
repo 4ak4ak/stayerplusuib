@@ -8,6 +8,18 @@ class SPButton extends StatelessWidget {
     Color(0xFFFD8768),
   ];
 
+  static const COLOR_SCHEME_2 = <Color>[
+    Color(0xFFF83B54),
+    Color(0xFFF93B54),
+    Color(0xFFF93B54),
+  ];
+
+  static const COLOR_SCHEME_3 = <Color>[
+    Color(0xFF55C4FB),
+    Color(0xFF55C4FB),
+    Color(0xFF55C4FB),
+  ];
+
   @required final String text;
   @required final List<Color> colorScheme;
   @required final VoidCallback onPressed;

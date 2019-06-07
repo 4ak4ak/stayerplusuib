@@ -175,8 +175,7 @@ class _TrackerPageState extends State<TrackerPage> {
     );
   }
 
-  Widget _getTime(int seconds, bool showHours, String label, double fontSize) {
-
+  String _getTimeString(int seconds, bool showHours) {
     int mins = (seconds / 60).floor();
     int secs = seconds % 60;
     String minsString = mins.toString().padLeft(2, '0');
@@ -188,6 +187,13 @@ class _TrackerPageState extends State<TrackerPage> {
       String hoursString = hours.toString().padLeft(2, '0');
       timeString = '$hoursString:$timeString';
     }
+
+    return timeString;
+  }
+
+  Widget _getTime(int seconds, bool showHours, String label, double fontSize) {
+
+    String timeString = _getTimeString(seconds, showHours);
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -293,7 +299,9 @@ class _TrackerPageState extends State<TrackerPage> {
         _loading = false;
       });
 
-      SPDialog.show(context, 'Финиш', 'Данные сохранены');
+      final secondsString = 'Время: ${_getTimeString(_trackerState.totalSeconds, true)}';
+      final metersString = 'Дистанция: ${_trackerState.totalDistance.floor()}м';
+      SPDialog.show(context, 'Финиш', '$secondsString\n$metersString\nДанные сохранены');
 
       TrackerModule.trackerUtil.clear();
 
