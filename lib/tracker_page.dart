@@ -300,7 +300,7 @@ class _TrackerPageState extends State<TrackerPage> {
       });
 
       final secondsString = 'Время: ${_getTimeString(_trackerState.totalSeconds, true)}';
-      final metersString = 'Дистанция: ${_trackerState.totalDistance.floor()}м';
+      final metersString = 'Дистанция: ${_trackerState.totalDistance.floor()} м';
       SPDialog.show(context, 'Финиш', '$secondsString\n$metersString\nДанные сохранены');
 
       TrackerModule.trackerUtil.clear();

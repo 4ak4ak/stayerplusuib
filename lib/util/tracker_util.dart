@@ -61,7 +61,7 @@ class TrackerUtil {
         distanceFilter: 0,
         stopOnTerminate: true,
         startOnBoot: false,
-        debug: true,
+        debug: false,
         reset: true,
         locationUpdateInterval: 1000,
         logLevel: bg.Config.LOG_LEVEL_VERBOSE,
