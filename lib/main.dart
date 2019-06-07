@@ -191,6 +191,8 @@ class _MyHomePageState extends  State<MyHomePage>{
           return new AlertDialog(
             title: Text('Код из смс'),
             content: TextField(
+                style: TextStyle(fontSize: 20.0),
+                keyboardType: TextInputType.number,
                 textAlign: TextAlign.center,
                 decoration: new InputDecoration(
                     hintText: "123456"
@@ -255,15 +257,13 @@ class _MyHomePageState extends  State<MyHomePage>{
           title: Text('Номер телефона'),
           content: TextField(
             keyboardType: TextInputType.phone,
+            textAlign: TextAlign.center,
             controller: textController,
               style: TextStyle(fontSize: 20.0),
               autofocus: true,
               decoration: new InputDecoration(
                   hintText: "Телефон"
               ),
-              onChanged: (value){
-                this.smsCode = value;
-              }
           ),
           contentPadding: EdgeInsets.all(12.0),
           actions: <Widget>[
