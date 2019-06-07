@@ -3,6 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:modal_progress_hud/modal_progress_hud.dart';
+import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 
 import 'homepage.dart';
 import 'signuppage.dart';
@@ -77,6 +79,7 @@ class _MyHomePageState extends  State<MyHomePage>{
   String smsCode;
   String verificationId;
 
+  bool _loading = false;
 
   Future<void> verifyPhone() async {
 
@@ -167,79 +170,134 @@ class _MyHomePageState extends  State<MyHomePage>{
   Widget build(BuildContext context) {
     // TODO: implement build
     return new Scaffold(
-      backgroundColor: Color(0xFF234486),
-//      appBar: new AppBar(
-//        title: new Text('PhoneAuth'),
-//      ),
-//    body: Stack(
-//      children: <Widget>[
-//        Image.asset('assets/background.png'),
-//        Container(
-//          width: double.infinity,
-//          height: double.infinity,
-//          child: SPButton(
-//            text: 'Войти через Google',
-//            colorScheme: SPButton.COLOR_SCHEME_1,
-//            onPressed: () {
-//            },
+    body: ModalProgressHUD(
+        inAsyncCall: _loading,
+        child: _getBody(),
+    ),
+//      body: new Center(
+//        child: new Container(
+//          padding: EdgeInsets.all(25.0),
+//          child: Column(
+//            mainAxisAlignment: MainAxisAlignment.center,
+//            children: <Widget>[
+//              TextField(
+//                decoration: InputDecoration(hintText: '+7 7xx xxx xx xx'),
+//                onChanged: (value){
+//                    this.phoneNum = value;
+//                },
+//
+//
+//              ),
+//              SizedBox(height: 10.0),
+//              RaisedButton(
+//                onPressed: verifyPhone,
+//                child: Text('Verify'),
+//                textColor: Colors.white,
+//                elevation: 7.0,
+//                color: Colors.blue
+//              ),
+//              RaisedButton(
+//                color: Colors.lightBlueAccent,
+//                  child: Text('Google'),
+//                  onPressed: () {
+//                    googleAuth.signIn().then((result) {
+//                      result.authentication.then((googleKey) {
+//
+//                        final credential = GoogleAuthProvider.getCredential(
+//                            idToken: googleKey.idToken,
+//                            accessToken: googleKey.accessToken);
+//
+//                        FirebaseAuth.instance
+//                            .signInWithCredential(credential)
+//                            .then((signedInUser) {
+//                          print('Signed in as ${signedInUser.displayName}');
+//                          Navigator.of(context).pushReplacementNamed(
+//                              '/homepage');
+//                        }).catchError((e) {
+//                          print(e);
+//                        });
+//                      }).catchError((e) {
+//                        print(e);
+//                      });
+//                    }).catchError((e) {
+//                      print(e);
+//                    });
+//                  })],
 //          ),
 //        ),
-//      ],
-//    )
-      body: new Center(
-        child: new Container(
-          padding: EdgeInsets.all(25.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              TextField(
-                decoration: InputDecoration(hintText: '+7 7xx xxx xx xx'),
-                onChanged: (value){
-                    this.phoneNum = value;
-                },
+//
+//      ),
+    );
+  }
 
-
-              ),
-              SizedBox(height: 10.0),
-              RaisedButton(
-                onPressed: verifyPhone,
-                child: Text('Verify'),
-                textColor: Colors.white,
-                elevation: 7.0,
-                color: Colors.blue
-              ),
-              RaisedButton(
-                color: Colors.lightBlueAccent,
-                  child: Text('Google'),
-                  onPressed: () {
-                    googleAuth.signIn().then((result) {
-                      result.authentication.then((googleKey) {
-
-                        final credential = GoogleAuthProvider.getCredential(
-                            idToken: googleKey.idToken,
-                            accessToken: googleKey.accessToken);
-
-                        FirebaseAuth.instance
-                            .signInWithCredential(credential)
-                            .then((signedInUser) {
-                          print('Signed in as ${signedInUser.displayName}');
-                          Navigator.of(context).pushReplacementNamed(
-                              '/homepage');
-                        }).catchError((e) {
-                          print(e);
-                        });
-                      }).catchError((e) {
-                        print(e);
-                      });
-                    }).catchError((e) {
-                      print(e);
-                    });
-                  })],
-          ),
+  _getBody() {
+    return Container(
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage('assets/background.jpg'),
+          fit: BoxFit.cover,
         ),
-
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          Container(
+            width: double.infinity,
+            height: 60,
+            child: SPButton(
+              text: 'Войти через Google',
+              colorScheme: SPButton.COLOR_SCHEME_1,
+              onPressed: () {
+                _googleAuth();
+              },
+            ),
+          ),
+          SizedBox(height: 60,),
+        ],
       ),
     );
+  }
+
+  _googleAuth() {
+    setState(() {
+      _loading = true;
+    });
+
+    googleAuth.signIn().then((result) {
+      result.authentication.then((googleKey) {
+
+        final credential = GoogleAuthProvider.getCredential(
+            idToken: googleKey.idToken,
+            accessToken: googleKey.accessToken);
+
+        FirebaseAuth.instance
+            .signInWithCredential(credential)
+            .then((signedInUser) {
+          setState(() {
+            _loading = false;
+          });
+          print('Signed in as ${signedInUser.displayName}');
+          Navigator.of(context).pushReplacementNamed(
+              '/homepage');
+        }).catchError((e) {
+          setState(() {
+            _loading = false;
+          });
+          print(e);
+        });
+      }).catchError((e) {
+        setState(() {
+          _loading = false;
+        });
+        print(e);
+      });
+    }).catchError((e) {
+      setState(() {
+        _loading = false;
+      });
+      print(e);
+    });
   }
 }
 

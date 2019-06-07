@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 
 class Dashboard extends StatefulWidget {
   @override
@@ -118,63 +119,127 @@ class _DashboardState extends State<Dashboard> {
                 ),
               ),
             ),
-            SliverFillRemaining(
-              child: StaggeredGridView.count (
-                crossAxisCount: 2,
-                crossAxisSpacing: 12.0,
-                mainAxisSpacing: 12.0,
-              padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
-              children: <Widget>[
-                InkWell(
+            SliverList(
+              delegate: SliverChildListDelegate(<Widget>[
+                _getItems(),
+              ]),
+            ),
+          ]),
+    );
+  }
+
+  _getItems() {
+    final widgets = List<Widget>();
+
+    widgets.add(
+        Container(
+          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          width: double.infinity,
+          height: 130,
+          child: Row(
+            children: <Widget>[
+              Expanded(
+                child: InkWell(
                   onTap: (){
-                  Navigator.of(context).pushNamed('/profile');
-                },
+                    Navigator.of(context).pushNamed('/profile');
+                  },
                   child: items(
                       Icons.account_circle, "Профиль"),
                 ),
-                InkWell(
+              ),
+              SizedBox(width: 16,),
+              Expanded(
+                child: InkWell(
                   onTap: (){
-                  Navigator.of(context).pushNamed('/community');
-                },
+                    Navigator.of(context).pushNamed('/community');
+                  },
                   child: items(Icons.group, "Коммьюнити"),
                 ),
-                InkWell(
-                  onTap: (){
-                  Navigator.of(context).pushNamed('/statistic');
-                },
-                child:  items(Icons.trending_down, "Статистика"),
-                  ),
-                InkWell(
-                  onTap: (){
-                    Navigator.of(context).pushNamed('/trecker');
-                },
-                child: items(Icons.track_changes, "Трекер"),
-                ),
-                InkWell(
+              ),
+            ],
+          ),
+        )
+    );
+
+    widgets.add(
+        Container(
+          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          width: double.infinity,
+          height: 130,
+          child: Row(
+            children: <Widget>[
+              Expanded(
+                child: InkWell(
                   onTap: (){
                     Navigator.of(context).pushNamed('/record');
-                },
-                child: items(Icons.star, "Рекорды"),
+                  },
+                  child: items(Icons.star, "Рекорды"),
                 ),
-                InkWell(
+              ),
+              SizedBox(width: 16,),
+              Expanded(
+                child: InkWell(
                   onTap: (){
-                    Navigator.of(context).pushNamed('/map');
+                    Navigator.of(context).pushNamed('/trecker');
+                  },
+                  child: items(Icons.track_changes, "Трекер"),
+                ),
+              ),
+            ],
+          ),
+        )
+    );
+
+    widgets.add(
+        Container(
+          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          width: double.infinity,
+          height: 130,
+          child: Row(
+            children: <Widget>[
+              Expanded(
+                child: InkWell(
+                  onTap: (){
+                    Navigator.of(context).pushNamed('/statistic');
+                  },
+                  child:  items(Icons.trending_down, "Статистика"),
+                ),
+              ),
+              SizedBox(width: 16,),
+              Expanded(
+                child: InkWell(
+                  onTap: (){
+                    _openMap();
                   },
                   child: items(Icons.map, "Карты"),
-                )
-              ],
-              staggeredTiles: [
-                StaggeredTile.extent(1, 120.0),
-                StaggeredTile.extent(1, 120.0),
-                StaggeredTile.extent(1, 120.0),
-                StaggeredTile.extent(1, 120.0),
-                StaggeredTile.extent(1, 120.0),
-                StaggeredTile.extent(1, 120.0),
-              ],
+                ),
               ),
-              ),
-          ]),
+            ],
+          ),
+        )
     );
+
+    return Container(
+      child: Column(
+        children: widgets,
+      ),
+    );
+  }
+
+  _openMap() {
+    Navigator.of(context).push(new MaterialPageRoute<Null>(
+        builder: (BuildContext context) {
+          return WebviewScaffold(
+            url: 'https://airkaz.org/index.php',
+            appBar: new AppBar(
+              title: const Text('Карта'),
+            ),
+            withZoom: true,
+            withLocalStorage: true,
+            hidden: true,
+          );
+        },
+        fullscreenDialog: true));
   }
 }
 
